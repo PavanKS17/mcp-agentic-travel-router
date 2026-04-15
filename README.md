@@ -1,12 +1,12 @@
-Section A — Architecture \& Trade-offs
+# Section A — Architecture \& Trade-offs
 
-Architecture Overview:
+## Architecture Overview:
 
 The Agentic Travel Recommendations API is designed as a lightweight orchestration layer built in Python. It acts as the intermediary between the AI Agent (connecting via the MCP tool endpoint) and our internal data services. When an AI agent invokes get\_recommendations, the service executes parallel asynchronous calls to the (mocked) Member Data API and Partner Config API. It then processes the member's history through a functional rule engine that dynamically applies the partner's configuration constraints before returning a sanitized JSON payload back to the agent.
 
 
 
-Design Trade-offs:
+## Design Trade-offs:
 
 
 
@@ -18,23 +18,29 @@ Functional Rule Engine vs. Complex Rules Engine Library: Partner constraints are
 
 
 
-Handling Partner Configuration Changes:
+## Handling Partner Configuration Changes:
 
 Because the service queries the Partner Config API at runtime (or relies on a short-lived cache), changes like a new recommendation cap or a category exclusion take effect immediately on the next API call. If a new type of exclusion rule is added (e.g., "exclude flights over 5 hours"), a new filter function must be added to the core recommendation pipeline and deployed.
 
 
 
-Section B — Production Readiness \& Incident Response
+# Section B — Production Readiness \& Incident Response
 
-Incident Runbook Entry: Cruise Recommendations Leak
+## Incident Runbook Entry:
 
-
-
-Alert: AI Concierge showing cruise recommendations for a partner with strict cruise exclusions.
+Cruise Recommendations Leak
 
 
 
-Diagnose: 1. Query the API logs using the correlation ID attached to the affected member's session.
+## Alert:
+
+AI Concierge showing cruise recommendations for a partner with strict cruise exclusions.
+
+
+
+## Diagnose:
+
+1\. Query the API logs using the correlation ID attached to the affected member's session.
 
 2\. Inspect the raw payload returned by the Partner Config service for that specific partner\_id to confirm exclude\_cruises is actively set to true.
 
@@ -42,19 +48,25 @@ Diagnose: 1. Query the API logs using the correlation ID attached to the affecte
 
 
 
-Confirm: If the Partner Config shows exclude\_cruises: true but our API response included a cruise, the failure is in our internal Rule Engine layer. If our API response correctly omitted the cruise, the failure is on the AI Agent/LLM prompt side.
+## Confirm:
+
+If the Partner Config shows exclude\_cruises: true but our API response included a cruise, the failure is in our internal Rule Engine layer. If our API response correctly omitted the cruise, the failure is on the AI Agent/LLM prompt side.
 
 
 
-Resolve: If it's a Rule Engine bug, initiate a rollback to the previous stable container image. Implement a hotfix in the filter logic, add a regression test for that specific partner configuration, and push through the CI/CD pipeline.
+## Resolve:
+
+If it's a Rule Engine bug, initiate a rollback to the previous stable container image. Implement a hotfix in the filter logic, add a regression test for that specific partner configuration, and push through the CI/CD pipeline.
 
 
 
-Section C — AI Usage Log
+# Section C — AI Usage Log
 
 
 
-Interaction 1: \* Asked: "Help me design an architecture to handle partner-specific rules for an AI travel agent."
+## Interaction 1: 
+
+Asked: "Help me design an architecture to handle partner-specific rules for an AI travel agent."
 
 
 
@@ -66,7 +78,7 @@ Action: Rejected. Pushed back because the assignment requires a 4-week delivery 
 
 
 
-Interaction 2:
+## Interaction 2:
 
 
 
@@ -82,7 +94,7 @@ Action: Kept and modified. Toned down the complexity of the runbook to reflect t
 
 
 
-Interaction 3:
+## Interaction 3:
 
 
 
