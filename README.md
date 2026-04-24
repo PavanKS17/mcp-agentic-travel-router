@@ -4,6 +4,8 @@
 
 The Agentic Travel Recommendations API is designed as a lightweight orchestration layer built in Python. It acts as the intermediary between the AI Agent (connecting via the MCP tool endpoint) and our internal data services. When an AI agent invokes get\_recommendations, the service executes parallel asynchronous calls to the (mocked) Member Data API and Partner Config API. It then processes the member's history through a functional rule engine that dynamically applies the partner's configuration constraints before returning a sanitized JSON payload back to the agent.
 
+----------------------------------------------------------------------------------------------------------------
+
 
 
 ## Design Trade-offs:
